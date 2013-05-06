@@ -1,0 +1,12 @@
+(ns granjure.control.monad_test
+  (:refer-clojure :exclude [when])
+  (:use clojure.test
+        granjure.control
+        granjure.control.functor
+        granjure.control.monad
+        granjure.control.monad.plus))
+
+(defn testing-monad-plus [monad-unit monad-zero]
+  (testing "MonadPlus"
+    (is (= (>>= monad-zero return) monad-zero))
+    (is (= (>> (monad-unit 42) monad-zero) monad-zero))))
