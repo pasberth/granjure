@@ -1,4 +1,5 @@
 (ns granjure.data.maybe
+  (:refer-clojure :exclude [when empty])
   (:use granjure.control.functor
         granjure.control.applicative
         granjure.control.monad
