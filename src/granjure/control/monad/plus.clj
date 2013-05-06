@@ -17,3 +17,5 @@
 
 (def mzero (Mzero.))
 (def mplus (cfn [m k] (plus-monad m k)))
+
+(def guard (cfn [p] (if p (return '()) mzero)))

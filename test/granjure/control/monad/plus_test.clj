@@ -9,4 +9,7 @@
 (defn testing-monad-plus [monad-unit monad-zero]
   (testing "MonadPlus"
     (is (= (>>= monad-zero return) monad-zero))
-    (is (= (>> (monad-unit 42) monad-zero) monad-zero))))
+    (is (= (>> (monad-unit 42) monad-zero) monad-zero)))
+  (testing "guard"
+    (is (= (specialize (>> (guard true) (return 42)) monad-zero) (monad-unit 42)))
+    (is (= (specialize (>> (guard false) (return 42)) monad-zero) monad-zero))))
