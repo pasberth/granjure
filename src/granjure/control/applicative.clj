@@ -26,17 +26,21 @@
 (defrecord Pure [a])
 (defrecord Apply [v u])
 (defrecord Empty [])
+(defrecord Plus [v u])
 
 (extend-protocol TypeClass
   Pure
     (infer-context [this] nil)
     (specialize [v cxt] (lift-applicative cxt (:a v)))
   Apply
-    (infer-context [this] (or  (infer-context (:v this)) (infer-context (:u this))))
+    (infer-context [this] (or (infer-context (:v this)) (infer-context (:u this))))
     (specialize [w cxt] (apply-applicative (specialize (:v w) cxt) (specialize (:u w) cxt)))
   Empty
     (infer-context [this] nil)
-    (specialize [_ cxt] (zero-applicative cxt)))
+    (specialize [_ cxt] (zero-applicative cxt))
+  Plus
+    (infer-context [this] (or (infer-context (:v this)) (infer-context (:u this))))
+    (specialize [w cxt] (plus-applicative (specialize (:v w) cxt) (specialize (:u w) cxt))))
 
 (def pure (cfn [a] (Pure. a)))
 (def <*> (cfn [v u]
@@ -49,5 +53,7 @@
 (def <* (lift-a2 const))
 
 (def empty (Empty.))
-
-
+(def <|> (cfn [v u]
+  (let [cxt (or (infer-context v) (infer-context u))] (if cxt
+    (specialize (Plus. v u) cxt)
+    (Plus. v u)))))

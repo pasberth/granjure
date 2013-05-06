@@ -26,6 +26,9 @@
 (extend-protocol Alternative
   Just
     (zero-applicative [_] (Nothing.))
+    (plus-applicative [v u] (mplus v u))
+  Nothing
+    (zero-applicative [_] (Nothing.))
     (plus-applicative [v u] (mplus v u)))
 
 (extend-protocol Monad
@@ -38,8 +41,8 @@
 
 (extend-protocol MonadPlus
   Just
-    (monad-zero [_] = (Nothing.))
-    (monad-plus [m _] m)
+    (zero-monad [_] = (Nothing.))
+    (plus-monad [m _] m)
   Nothing
-    (monad-zero [_] = (Nothing.))
-    (monad-plus [_ m] m))
+    (zero-monad [_] = (Nothing.))
+    (plus-monad [_ m] m))
