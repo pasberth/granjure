@@ -9,7 +9,7 @@
   (let [m (monad-unit x)
         m2 (monad-unit (monad-unit x))
         m3 (monad-unit (monad-unit (monad-unit x)))]
-    (is (= (>>= m f) (f x)))
+    (is (= (>>= m (comp return f)) (specialize (return (f x)) m)))
     (is (= (join (fmap join m3)) (join (join m3))))
     (is (= (monad-unit (f x)) (fmap f (monad-unit x))))
     (is (= (join (fmap (fmap f) m2)) (fmap f (join m2))))))
