@@ -13,9 +13,6 @@
     (infer-context [this] (infer-context (:fr this)))
     (specialize [fr cxt] (commutated-fmap (specialize (:fr fr) cxt) (:f fr))))
 
-(def fmap (cfn [f fr]
-  (let [cxt (infer-context fr)] (if cxt
-    (specialize (Fmap. f fr) cxt)
-    (Fmap. f fr)))))
+(def fmap (cfn [f fr] (specialize-when [fr] (Fmap. f fr))))
 (def <$> fmap)
 (def <$  (compose <$> const))

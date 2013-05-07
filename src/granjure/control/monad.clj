@@ -38,10 +38,7 @@
         (specialize r cxt))))
 
 (def return (cfn [a] (Unit. a)))
-(def >>= (cfn [m k]
-  (let [cxt (infer-context m)] (if cxt
-    (specialize (Bind. m k) cxt)
-    (Bind. m k)))))
+(def >>= (cfn [m k] (specialize-when [m] (Bind. m k))))
 (def >> (cfn [m k] (>>= m (fn [_] k))))
 
 (def join (cfn [m]

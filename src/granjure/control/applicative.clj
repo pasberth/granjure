@@ -43,17 +43,11 @@
     (specialize [w cxt] (plus-applicative (specialize (:v w) cxt) (specialize (:u w) cxt))))
 
 (def pure (cfn [a] (Pure. a)))
-(def <*> (cfn [v u]
-  (let [cxt (or (infer-context v) (infer-context u))] (if cxt
-    (specialize (Apply. v u) cxt)
-    (Apply. v u)))))
+(def <*> (cfn [v u] (specialize-when [v u] (Apply. v u))))
 (def <**> (flip <*>))
 (def lift-a2 (cfn [f a] (<*> (fmap f a))))
 (def *> (lift-a2 (const id)))
 (def <* (lift-a2 const))
 
 (def empty (Empty.))
-(def <|> (cfn [v u]
-  (let [cxt (or (infer-context v) (infer-context u))] (if cxt
-    (specialize (Plus. v u) cxt)
-    (Plus. v u)))))
+(def <|> (cfn [v u] (specialize-when [v u] (Apply. v u))))

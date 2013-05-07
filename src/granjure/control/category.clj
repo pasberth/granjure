@@ -25,9 +25,6 @@
     (specialize [this cxt] (compose-category (specialize (:f this) cxt) (specialize (:g this) cxt))))
 
 (def id (Identity.))
-(def compose (cfn [f g]
-  (let [cxt (infer-context (Compose. f g))] (if cxt
-    (specialize (Compose. f g) cxt)
-    (Compose. f g)))))
+(def compose (cfn [f g] (specialize-when [f g] (Compose. f g))))
 (def <<< compose)
 (def >>> (flip compose))

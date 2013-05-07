@@ -26,10 +26,7 @@
     (specialize [this cxt] (apply-first (specialize (:arr this) cxt) (:pair this))))
 
 (def arr (cfn [f] (Arr. f)))
-(def fst (cfn [arr pair]
-  (let [cxt (infer-context arr)] (if cxt
-    (specialize (Fst. arr pair) cxt)
-    (Fst. arr pair)))))
+(def fst (cfn [arr pair] (specialize-when [arr] (Fst. arr pair))))
 (def snd (cfn [f]
   (let [swp (fn [[a b & xs]] (apply list b a xs))]
     (>>> (>>> swp (fst f)) swp))))
