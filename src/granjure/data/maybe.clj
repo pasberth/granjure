@@ -2,6 +2,7 @@
   (:refer-clojure :exclude [when empty])
   (:use granjure.control.functor
         granjure.control.applicative
+        granjure.control.applicative.alternative
         granjure.control.monad
         granjure.control.monad.plus))
 
