@@ -9,13 +9,17 @@
   (plus-monad [m k]))
 
 (defrecord Mzero [])
+(defrecord Mplus [m k])
 
 (extend-protocol TypeClass
   Mzero
     (infer-context [this] nil)
-    (specialize [t cxt] (zero-monad cxt)))
+    (specialize [_ cxt] (zero-monad cxt))
+  Mplus
+    (infer-context [this] (or (infer-context (:m this)) (infer-context (:k this))))
+    (specialize [this cxt] (plus-monad (specialize (:m this) cxt) (specialize (:k this) cxt))))
 
 (def mzero (Mzero.))
-(def mplus (cfn [m k] (plus-monad m k)))
+(def mplus (cfn [m k] (specialize-when [m] (Mplus. m k))))
 
 (def guard (cfn [p] (if p (return '()) mzero)))
