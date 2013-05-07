@@ -1,5 +1,5 @@
 (ns granjure.control.category
-  (:use granjure.core
+  (:use infixing.core
         [granjure.primitive :exclude [id compose]]
         granjure.control))
 
@@ -22,7 +22,7 @@
     (specialize [_ cxt] (identity-category cxt))
   Compose
     (infer-context [this] (or (infer-context (:f this)) (infer-context (:g this))))
-    (specialize [_ cxt] (compose-category (specialize (:f this) cxt) (specialize (:g this)))))
+    (specialize [this cxt] (compose-category (specialize (:f this) cxt) (specialize (:g this) cxt))))
 
 (def id (Identity.))
 (def compose (cfn [f g]
