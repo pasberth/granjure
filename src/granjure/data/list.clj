@@ -12,7 +12,7 @@
     (commutated-fmap [m f] (map f m))
   Monad
     (unit [_ a] (list a))
-    (bind [m k] (apply concat (map #(try-specialize (k %) m) m)))
+    (bind [m k] (apply concat (map k m)))
   MonadPlus
     (zero-monad [_] (list))
     (plus-monad [m k] (concat m k)))

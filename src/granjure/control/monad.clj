@@ -32,7 +32,7 @@
   Bind
     (specialize [this cxt]
       (let [m (try-specialize (:m this) cxt)
-            r (bind m (:k this))]
+            r (bind m #(try-specialize ((:k this) %) m))]
         (try-specialize r cxt))))
 
 (def return (cfn [a] (Unit. a)))
