@@ -4,9 +4,9 @@
 (def primitive-rule
   (rules
     (infix-map  -1 :=     (fn [x b] (fn [a] `(let [~x ~b] ~a))))
-    (infixr-map -2 :.     (fn [v u] (fn [a] (v (u a)))))
-    (infixr-map -3 :in    (fn [v a] (v a)))
-    (infix-map  -4 :where (fn [v a] (v a)))))
+    (infixr-map -3 :.     (fn [v u] (fn [a] (v (u a)))))
+    (infixr-map -4 :in    (fn [v a] (v a)))
+    (infix-map  -5 :where (fn [a v] (v a)))))
 
 (defn uncurry [f]
   (fn ([x]      (f x))
