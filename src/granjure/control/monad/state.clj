@@ -15,10 +15,8 @@
 
 (extend-protocol TypeClass
   Get
-    (infer-context [this] nil)
     (specialize [this cxt] (get-state cxt))
   Put
-    (infer-context [this] nil)
     (specialize [this cxt] (put-state cxt (:s this))))
 
 (def get (Get.))

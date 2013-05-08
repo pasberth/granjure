@@ -19,10 +19,8 @@
 
 (extend-protocol TypeClass
   Empty
-    (infer-context [this] nil)
     (specialize [_ cxt] (zero-applicative cxt))
   Plus
-    (infer-context [this] (or (infer-context (:v this)) (infer-context (:u this))))
     (specialize [w cxt] (plus-applicative (try-specialize (:v w) cxt) (try-specialize (:u w) cxt))))
 
 (def empty (Empty.))

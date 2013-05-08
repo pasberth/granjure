@@ -18,10 +18,8 @@
 
 (extend-protocol TypeClass
   Identity
-    (infer-context [this] nil)
     (specialize [_ cxt] (identity-category cxt))
   Compose
-    (infer-context [this] (or (infer-context (:f this)) (infer-context (:g this))))
     (specialize [this cxt] (compose-category (try-specialize (:f this) cxt) (try-specialize (:g this) cxt))))
 
 (def id (Identity.))

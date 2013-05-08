@@ -28,10 +28,8 @@
 
 (extend-protocol TypeClass
   Unit
-    (infer-context [this] nil)
     (specialize [this cxt] (unit cxt (:a this)))
   Bind
-    (infer-context [this] (infer-context (:m this)))
     (specialize [this cxt]
       (let [m (try-specialize (:m this) cxt)
             r (bind m (:k this))]

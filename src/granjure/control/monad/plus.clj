@@ -13,10 +13,8 @@
 
 (extend-protocol TypeClass
   Mzero
-    (infer-context [this] nil)
     (specialize [_ cxt] (zero-monad cxt))
   Mplus
-    (infer-context [this] (or (infer-context (:m this)) (infer-context (:k this))))
     (specialize [this cxt] (plus-monad (try-specialize (:m this) cxt) (try-specialize (:k this) cxt))))
 
 (def mzero (Mzero.))

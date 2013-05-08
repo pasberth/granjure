@@ -1,7 +1,6 @@
 (ns granjure.control)
 
 (defprotocol TypeClass
-  (infer-context [this])
   (specialize [this cxt]))
 
 (def type-class? #(satisfies? TypeClass %))

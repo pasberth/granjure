@@ -9,7 +9,6 @@
 
 (extend-protocol TypeClass
   Lift
-    (infer-context [this] nil)
     (specialize [t cxt] (lift-monad cxt (:m t))))
 
 (def lift (cfn [m] (Lift. m)))

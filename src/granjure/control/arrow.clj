@@ -19,10 +19,8 @@
 
 (extend-protocol TypeClass
   Arr
-    (infer-context [this] nil)
     (specialize [this cxt] (lift-arrow cxt (:f this)))
   Fst
-    (infer-context [this] nil)
     (specialize [this cxt] (apply-first (try-specialize (:arr this) cxt) (:pair this))))
 
 (def arr (cfn [f] (Arr. f)))
