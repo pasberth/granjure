@@ -1,4 +1,4 @@
-(ns granjure.control.monad_test
+(ns granjure.control.monad.plus_test
   (:refer-clojure :exclude [when])
   (:use clojure.test
         granjure.control
