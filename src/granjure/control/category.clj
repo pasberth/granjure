@@ -22,7 +22,7 @@
     (specialize [_ cxt] (identity-category cxt))
   Compose
     (infer-context [this] (or (infer-context (:f this)) (infer-context (:g this))))
-    (specialize [this cxt] (compose-category (specialize (:f this) cxt) (specialize (:g this) cxt))))
+    (specialize [this cxt] (compose-category (try-specialize (:f this) cxt) (try-specialize (:g this) cxt))))
 
 (def id (Identity.))
 (def compose (cfn [f g] (specialize-when [f g] (Compose. f g))))

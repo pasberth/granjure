@@ -17,7 +17,7 @@
     (specialize [_ cxt] (zero-monad cxt))
   Mplus
     (infer-context [this] (or (infer-context (:m this)) (infer-context (:k this))))
-    (specialize [this cxt] (plus-monad (specialize (:m this) cxt) (specialize (:k this) cxt))))
+    (specialize [this cxt] (plus-monad (try-specialize (:m this) cxt) (try-specialize (:k this) cxt))))
 
 (def mzero (Mzero.))
 (def mplus (cfn [m k] (specialize-when [m] (Mplus. m k))))

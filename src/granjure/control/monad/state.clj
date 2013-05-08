@@ -36,7 +36,7 @@
     (unit [_ a] (StateT. (cfn [s] (return (list a s)))))
     (bind [m k] (StateT. (cfn [s] (do-m (
       [a s] <- ((:run-state-t m) s) :.
-      m- <- (return (specialize (k a) m)) :in
+      m- <- (return (try-specialize (k a) m)) :in
       ((:run-state-t m-) s))))))
   MonadState
     (get-state [_] (StateT. (cfn [s] (return (list s s)))))

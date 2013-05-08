@@ -24,7 +24,7 @@
     (specialize [v cxt] (lift-applicative cxt (:a v)))
   Apply
     (infer-context [this] (or (infer-context (:v this)) (infer-context (:u this))))
-    (specialize [w cxt] (apply-applicative (specialize (:v w) cxt) (specialize (:u w) cxt))))
+    (specialize [w cxt] (apply-applicative (try-specialize (:v w) cxt) (try-specialize (:u w) cxt))))
 
 (def pure (cfn [a] (Pure. a)))
 (def <*> (cfn [v u] (specialize-when [v u] (Apply. v u))))

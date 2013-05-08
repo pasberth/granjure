@@ -11,7 +11,7 @@
 (extend-protocol TypeClass
   Fmap
     (infer-context [this] (infer-context (:fr this)))
-    (specialize [fr cxt] (commutated-fmap (specialize (:fr fr) cxt) (:f fr))))
+    (specialize [fr cxt] (commutated-fmap (try-specialize (:fr fr) cxt) (:f fr))))
 
 (def fmap (cfn [f fr] (specialize-when [fr] (Fmap. f fr))))
 (def <$> fmap)

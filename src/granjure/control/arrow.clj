@@ -23,7 +23,7 @@
     (specialize [this cxt] (lift-arrow cxt (:f this)))
   Fst
     (infer-context [this] nil)
-    (specialize [this cxt] (apply-first (specialize (:arr this) cxt) (:pair this))))
+    (specialize [this cxt] (apply-first (try-specialize (:arr this) cxt) (:pair this))))
 
 (def arr (cfn [f] (Arr. f)))
 (def fst (cfn [arr pair] (specialize-when [arr] (Fst. arr pair))))

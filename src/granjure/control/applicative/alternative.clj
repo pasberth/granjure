@@ -23,7 +23,7 @@
     (specialize [_ cxt] (zero-applicative cxt))
   Plus
     (infer-context [this] (or (infer-context (:v this)) (infer-context (:u this))))
-    (specialize [w cxt] (plus-applicative (specialize (:v w) cxt) (specialize (:u w) cxt))))
+    (specialize [w cxt] (plus-applicative (try-specialize (:v w) cxt) (try-specialize (:u w) cxt))))
 
 (def empty (Empty.))
 (def <|> (cfn [v u] (specialize-when [v u] (Plus. v u))))

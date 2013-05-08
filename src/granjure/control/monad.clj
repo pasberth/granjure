@@ -33,9 +33,9 @@
   Bind
     (infer-context [this] (infer-context (:m this)))
     (specialize [this cxt]
-      (let [m (specialize (:m this) cxt)
+      (let [m (try-specialize (:m this) cxt)
             r (bind m (:k this))]
-        (specialize r cxt))))
+        (try-specialize r cxt))))
 
 (def return (cfn [a] (Unit. a)))
 (def >>= (cfn [m k] (specialize-when [m] (Bind. m k))))
