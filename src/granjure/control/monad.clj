@@ -12,8 +12,8 @@
 
 (def do-rule
   (rules
-    (infix-map  -1 '<- (fn [x m] (fn [k] `(~'>>= ~m (fn [~x] ~k)))))
-    (infixr-map -3 :>>  (fn [m k] `(~'>> ~m ~k)))
+    (infix-map  -1 '<- (fn [x m] (fn [k] `(>>= ~m (fn [~x] ~k)))))
+    (infixr-map -3 :>>  (fn [m k] `(>> ~m ~k)))
     primitive-rule))
 
 (defmacro do-m [code]
