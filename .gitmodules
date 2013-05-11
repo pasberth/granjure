@@ -1,3 +1,0 @@
-[submodule ".vendor/infixing"]
-	path = .vendor/infixing
-	url = git@github.com:pasberth/infixing.git
