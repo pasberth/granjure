@@ -7,7 +7,7 @@
         granjure.control.monad.plus))
 
 (def mzip-rule
-  (rules
+  (merge-rule
     (infixr-map -2 :when  (fn [v a] (fn [m] (v `(>> (guard ~a) ~m)))))
     (infix-map  -5 '|     (fn [a v] (v `(return ~a))))
     do-rule))

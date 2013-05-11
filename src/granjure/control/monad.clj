@@ -5,13 +5,13 @@
         granjure.control))
 
 (def monad-rule
-  (rules
+  (merge-rule
     (infixl 1 '>>)
     (infixl 1 '>>=)
     primitive-rule))
 
 (def do-rule
-  (rules
+  (merge-rule
     (infix-map  -1 '<- (fn [x m] (fn [k] `(>>= ~m (fn [~x] ~k)))))
     (infixr-map -3 :>>  (fn [m k] `(>> ~m ~k)))
     primitive-rule))

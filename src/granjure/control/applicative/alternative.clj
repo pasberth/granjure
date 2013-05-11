@@ -7,8 +7,9 @@
         granjure.control.applicative))
 
 (def alternative-rule
-  (rules (infixl 3 '<|>)
-         applicative-rule))
+  (merge-rule
+    (infixl 3 '<|>)
+    applicative-rule))
 
 (defprotocol Alternative
   (zero-applicative [this])

@@ -5,7 +5,7 @@
         granjure.control.category))
 
 (def arrow-rule
-  (rules
+  (merge-rule
     (infixr 3 '***)
     (infixr 3 '&&&)
     category-rule))

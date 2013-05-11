@@ -4,7 +4,7 @@
         granjure.control))
 
 (def category-rule
-  (rules
+  (merge-rule
     (infixr-map 9 '.  (fn [f g] `(~'compose ~f ~g)))
     (infixr     1 '<<<)
     (infixr     1 '>>>)))

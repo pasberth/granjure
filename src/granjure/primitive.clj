@@ -2,7 +2,7 @@
   (:use infixing.core))
 
 (def primitive-rule
-  (rules
+  (merge-rule
     (infix-map  -1 :=     (fn [x b] (fn [a] `(let [~x ~b] ~a))))
     (infixr-map -3 :.     (fn [v u] (fn [a] (v (u a)))))
     (infixr-map -4 :in    (fn [v a] (v a)))

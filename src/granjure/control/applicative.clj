@@ -5,10 +5,11 @@
         granjure.control.functor))
 
 (def applicative-rule
-  (rules (infixl 4 '<*>)
-         (infixl 4 '<*)
-         (infixl 4 '*>)
-         (infixl 4 '<**>)))
+  (merge-rule
+    (infixl 4 '<*>)
+    (infixl 4 '<*)
+    (infixl 4 '*>)
+    (infixl 4 '<**>)))
 
 (defprotocol Applicative
   (lift-applicative [this a])
