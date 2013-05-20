@@ -6,8 +6,10 @@
         granjure.control.monad.plus_test)
   (:import [granjure.data.maybe Just Nothing]))
 
-(deftest applicative_test
-  (testing-applicative (maybe-unit 42)))
+(defn maybe-unit [a] (Just. a))
+
+(deftest applicative-test
+  (testing-applicative (Just. 42)))
 (deftest monad-test
   (testing-monad maybe-unit))
 (deftest monad-plus-test

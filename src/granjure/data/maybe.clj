@@ -9,8 +9,6 @@
 (defrecord Just [a])
 (defrecord Nothing [])
 
-(defn maybe-unit [a] (Just. a))
-
 (extend-protocol Functor
   Just
     (commutated-fmap [this f] (Just. (f (:a this))))
@@ -35,10 +33,10 @@
 
 (extend-protocol Monad
   Just
-    (unit [this a] (maybe-unit a))
+    (unit [this a] (Just. a))
     (bind [m k] (k (:a m)))
   Nothing
-    (unit [this a] (maybe-unit a))
+    (unit [this a] (Just. a))
     (bind [m k] (Nothing.)))
 
 (extend-protocol MonadPlus
