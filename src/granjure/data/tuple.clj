@@ -5,7 +5,6 @@
   clojure.lang.Seqable
     (seq   [_] xs)
   clojure.lang.IPersistentCollection
-    (cons  [_ a] (Tuple. (cons xs a)))
     (count [_] (count xs))
     (empty [_] (Tuple. []))
     (equiv [_ a] (= a xs))
