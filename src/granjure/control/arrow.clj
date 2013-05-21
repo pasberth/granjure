@@ -2,7 +2,8 @@
   (:use infixing.core
         [granjure.primitive :exclude [id compose]]
         granjure.control
-        granjure.control.category))
+        granjure.control.category
+        granjure.data.tuple))
 
 (def arrow-rule
   (merge-rule
@@ -26,7 +27,7 @@
 (def arr (cfn [f] (Arr. f)))
 (def fst (cfn [arr pair] (specialize-when [arr] (Fst. arr pair))))
 (def snd (cfn [f]
-  (let [swp (fn [[a b & xs]] (apply list b a xs))]
+  (let [swp (fn [pair] (apply tuple (second pair) (first pair) (nnext pair)))]
     (>>> (>>> swp (fst f)) swp))))
 (def *** (cfn [f g] (>>> (fst f) (snd g))))
-(def &&& (cfn [f g] (>>> (arr (fn [x] (list x x))) (*** f g))))
+(def &&& (cfn [f g] (>>> (arr (fn [x] (tuple x x))) (*** f g))))

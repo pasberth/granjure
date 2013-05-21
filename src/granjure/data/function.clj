@@ -6,7 +6,8 @@
         [granjure.control.category :exclude [id compose]]
         granjure.control.arrow
         granjure.control.functor
-        granjure.control.applicative))
+        granjure.control.applicative
+        granjure.data.tuple))
 
 (extend-type clojure.lang.Fn
   Category
@@ -14,7 +15,7 @@
     (compose-category  [f g] (compose f g))
   Arrow
     (lift-arrow [this f] f)
-    (apply-first [f [a b]] (list (f a) b))
+    (apply-first [f xs] (apply tuple (f (first xs)) (second xs) (nnext xs)))
   Functor
     (commutated-fmap [f g] (compose g f))
   Applicative
