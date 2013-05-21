@@ -15,7 +15,7 @@
     (compose-category  [f g] (compose f g))
   Arrow
     (lift-arrow [this f] f)
-    (apply-first [f xs] (apply tuple (f (first xs)) (second xs) (nnext xs)))
+    (first-arrow [f] (fn [xs] (apply tuple (f (first xs)) (second xs) (nnext xs))))
   Functor
     (commutated-fmap [f g] (compose g f))
   Applicative

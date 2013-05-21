@@ -13,19 +13,19 @@
 
 (defprotocol Arrow
   (lift-arrow [this a])
-  (apply-first [arr pair]))
+  (first-arrow [arr]))
 
 (defrecord Arr [f])
-(defrecord Fst [arr pair])
+(defrecord Fst [arr])
 
 (extend-protocol TypeClass
   Arr
     (specialize [this cxt] (lift-arrow cxt (:f this)))
   Fst
-    (specialize [this cxt] (apply-first (try-specialize (:arr this) cxt) (:pair this))))
+    (specialize [this cxt] (first-arrow (try-specialize (:arr this) cxt))))
 
 (def arr (cfn [f] (Arr. f)))
-(def fst (cfn [arr pair] (specialize-when [arr] (Fst. arr pair))))
+(def fst (cfn [arr] (specialize-when [arr] (Fst. arr))))
 (def snd (cfn [f]
   (let [swp (fn [pair] (apply tuple (second pair) (first pair) (nnext pair)))]
     (>>> (>>> swp (fst f)) swp))))
