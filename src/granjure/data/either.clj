@@ -24,3 +24,7 @@
     (invoke [_ f] (ethright a f))
     (invoke [_ f g] (ethright a f g))
     (applyTo [_ args] (apply ethright a args)))
+
+(def left (cfn [f e] (e (cfn [a] (Left. (f a))) (cfn [a] (Right. a)))))
+(def right (cfn [f e] (e (cfn [a] (Left. a)) (cfn [a] (Right. (f a))))))
+(def mirror (cfn [e] (e (cfn [a] (Right. a)) (cfn [a] (Left. a)))))
