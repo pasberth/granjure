@@ -1,7 +1,18 @@
 (ns granjure.data.tuple
   (:use granjure.primitive))
 
-(defrecord Tuple [xs])
+(deftype Tuple [xs]
+  clojure.lang.Seqable
+    (seq   [_] xs)
+  clojure.lang.IPersistentCollection
+    (cons  [_ a] (Tuple. (cons xs a)))
+    (count [_] (count xs))
+    (empty [_] (Tuple. []))
+    (equiv [_ a] (= xs a))
+  clojure.lang.ISeq
+    (first [_] (first xs))
+    (next  [_] (next xs))
+    (more  [_] (rest xs)))
 
 (defn tuple [& xs]
   (Tuple. xs))
