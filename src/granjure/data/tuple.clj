@@ -11,7 +11,7 @@
     (equiv [_ a] (= a xs))
   clojure.lang.ISeq
     (first [_] (first xs))
-    (next  [_] (next xs)))
+    (next  [_] (Tuple. (next xs))))
 
 (defn tuple [& xs]
   (Tuple. xs))
