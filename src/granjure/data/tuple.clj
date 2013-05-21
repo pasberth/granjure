@@ -8,7 +8,7 @@
     (cons  [_ a] (Tuple. (cons xs a)))
     (count [_] (count xs))
     (empty [_] (Tuple. []))
-    (equiv [_ a] (= xs a))
+    (equiv [_ a] (= a xs))
   clojure.lang.ISeq
     (first [_] (first xs))
     (next  [_] (next xs))
