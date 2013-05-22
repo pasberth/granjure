@@ -16,7 +16,7 @@ Applicative
 
   (<*> list inc 42)  ; (42 43)
   (<* list inc 42)   ; (42)
-  (*> list inc 42)   ; 42
+  (*> list inc 42)   ; 43
   (<**> inc list 42) ; (42 43)
 
 Arrow
