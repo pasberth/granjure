@@ -67,6 +67,8 @@ Curried functions
 
 All functions of Granjure are curried.
 
+.. code:: clojure
+
   (use '[granjure.data.tuple :only [tuple2]])
   (tuple2 1)     ; #<primitive$uncurry$fn__1193 granjure.primitive$uncurry$fn__1193@32b3869c>
   ((tuple2 1) 2) ; (1 2)
@@ -78,6 +80,8 @@ Infix-notation
 
 Each library of Granjure provides infix-notation macros only for syntax-suger.
 You can use infix-notation if you need, by the `infixing library <https://github.com/pasberth/infixing/>` .
+
+.. code:: clojure
 
   (use '[granjure.control.applicative :only [<*> applicative-rule]])
   (use '[infixing.core :only [infixing]])
