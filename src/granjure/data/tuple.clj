@@ -10,7 +10,9 @@
     (equiv [_ a] (= a xs))
   clojure.lang.ISeq
     (first [_] (first xs))
-    (next  [_] (Tuple. (next xs))))
+    (next  [_] (Tuple. (next xs)))
+  clojure.lang.IPersistentVector
+    (nth   [_ n] (nth xs n)))
 
 (defn tuple [& xs]
   (Tuple. xs))
