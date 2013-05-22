@@ -79,7 +79,7 @@ Infix-notation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Each library of Granjure provides infix-notation macros only for syntax-suger.
-You can use infix-notation if you need, by the `infixing library <https://github.com/pasberth/infixing/>` .
+You can use infix-notation if you need, by the `infixing library <https://github.com/pasberth/infixing/>`_ .
 
 .. code:: clojure
 
