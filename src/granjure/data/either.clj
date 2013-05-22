@@ -1,29 +1,22 @@
 (ns granjure.data.either
-  (:use granjure.primitive
-        granjure.data.tuple))
+  (:use granjure.primitive))
 
 (defmacro eithern [n]
-  (let [ eithers
-         (for [i (range n)]
-           (let [ fs (for [j (range n)] (symbol (str "f" j)))
-                  go (symbol (str "f" i)) ]
-             `(cfn [~'a ~@fs] (~go ~'a)))) ]
-  `(tuple ~@eithers)))
-
-(def ethleft (first (eithern 2)))
-(def ethright (second (eithern 2)))
+  (let [ fs (for [i (range n)] (symbol (str "f" i))) 
+         go (symbol (str "f" (dec n))) ]
+    `(cfn [~'a] (fn [~@fs & ~'_] (~go ~'a)))))
 
 (defrecord Left [a]
   clojure.lang.IFn
-    (invoke [_ f] (ethleft a f))
-    (invoke [_ f g] (ethleft a f g))
-    (applyTo [_ args] (apply ethleft a args)))
+    (invoke [_ f] ((eithern 1) a f))
+    (invoke [_ f g] ((eithern 1) a f g))
+    (applyTo [_ args] (apply (eithern 1) a args)))
 
 (defrecord Right [a]
   clojure.lang.IFn
-    (invoke [_ f] (ethright a f))
-    (invoke [_ f g] (ethright a f g))
-    (applyTo [_ args] (apply ethright a args)))
+    (invoke [_ f] ((eithern 2) a f))
+    (invoke [_ f g] ((eithern 2) a f g))
+    (applyTo [_ args] (apply (eithern 2) a args)))
 
 (def left (cfn [f e] (e (cfn [a] (Left. (f a))) (cfn [a] (Right. a)))))
 (def right (cfn [f e] (e (cfn [a] (Left. a)) (cfn [a] (Right. (f a))))))
