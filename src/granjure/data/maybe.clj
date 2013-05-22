@@ -4,21 +4,22 @@
         granjure.control.applicative
         granjure.control.applicative.alternative
         granjure.control.monad
-        granjure.control.monad.plus))
+        granjure.control.monad.plus
+        granjure.data))
 
-(defrecord Just [a])
-(defrecord Nothing [])
+(definductive Just [a])
+(definductive Nothing [])
 
 (extend-protocol Functor
   Just
-    (commutated-fmap [this f] (Just. (f (:a this))))
+    (commutated-fmap [this f] (Just. (f (.a this))))
   Nothing
     (commutated-fmap [this f] (Nothing.)))
 
 (extend-protocol Applicative
   Just
     (lift-applicative [this a] (Just. a))
-    (apply-applicative [v u] (fmap (:a v) u))
+    (apply-applicative [v u] (fmap (.a v) u))
   Nothing
     (lift-applicative [this a] (Just. a))
     (apply-applicative [v u] (Nothing.)))
@@ -34,7 +35,7 @@
 (extend-protocol Monad
   Just
     (unit [this a] (Just. a))
-    (bind [m k] (k (:a m)))
+    (bind [m k] (k (.a m)))
   Nothing
     (unit [this a] (Just. a))
     (bind [m k] (Nothing.)))

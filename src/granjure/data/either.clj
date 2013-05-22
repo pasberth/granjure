@@ -1,18 +1,19 @@
 (ns granjure.data.either
-  (:use granjure.primitive))
+  (:use granjure.primitive
+        granjure.data))
 
 (defmacro eithern [n]
   (let [ fs (for [i (range n)] (symbol (str "f" i))) 
          go (symbol (str "f" (dec n))) ]
     `(cfn [~'a] (fn [~@fs & ~'_] (~go ~'a)))))
 
-(defrecord Left [a]
+(definductive Left [a]
   clojure.lang.IFn
     (invoke [_ f] ((eithern 1) a f))
     (invoke [_ f g] ((eithern 1) a f g))
     (applyTo [_ args] (apply (eithern 1) a args)))
 
-(defrecord Right [a]
+(definductive Right [a]
   clojure.lang.IFn
     (invoke [_ f] ((eithern 2) a f))
     (invoke [_ f g] ((eithern 2) a f g))
