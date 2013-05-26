@@ -50,3 +50,6 @@
 (def when (cfn [p a]
   (if p a (return '()))))
 (def unless (flip when))
+
+(def product (cfn [[m & ms] f]
+  (>>= m (reduce (fn [f m] (fn [& xs] (>>= m (fn [x] (apply f `(~@xs ~x)))))) f (reverse ms)))))
