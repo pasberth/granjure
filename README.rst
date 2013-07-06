@@ -83,6 +83,7 @@ You can use infix-notation if you need, by the `infixing library <https://github
 
 .. code:: clojure
 
+  (require 'granjure.data.function)
   (use '[granjure.control.applicative :only [<*> applicative-rule]])
   (use '[infixing.core :only [infixing]])
 
