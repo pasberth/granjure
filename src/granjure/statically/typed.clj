@@ -11,11 +11,17 @@
   (TypeSystem. (:ast type-system) (conj (:cxt type-system) [sym type])))
 
 (declare syntactic-type)
+(declare lookup-type-of)
 
 (defn statically-type [type-system ast] (cond 
   (seq?    ast) (syntactic-type type-system ast)
-  (symbol? ast) ((:cxt type-system) ast)
+  (symbol? ast) (lookup-type-of type-system ast)
   :else         (type ast)))
+
+(defn lookup-type-of [type-system sym]
+  ((:cxt type-system) sym)
+  ; TODO: もし存在しなければ type-system の ast で def されていないかを調べる
+  )
 
 (defmulti  syntactic-type                 (fn [type-system ast] (first ast)))
 (defmethod syntactic-type 'fn*                [type-system ast] (letfn
