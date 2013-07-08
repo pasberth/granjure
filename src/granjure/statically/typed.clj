@@ -20,7 +20,7 @@
 (defmulti  syntactic-type                 (fn [type-system ast] (first ast)))
 (defmethod syntactic-type 'fn*                [type-system ast] (letfn
   [ (typing [params expr] (let
-      [ src        (reduce (fn [a b] (&&&. a b)) (reverse params))
+      [ src        (reduce (fn [a b] (&&&. a b)) (map (fn [a] (Var. a)) (reverse params)))
       , assumption (reduce (fn [a b] (assume a b (Var. b))) type-system params)
       , tgt        (statically-type assumption expr) ]
       (Arr. src tgt)))
