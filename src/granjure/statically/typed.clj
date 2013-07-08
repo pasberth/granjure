@@ -38,7 +38,7 @@
       (seq?    (fnext ast)) (let [ [ _ px-pair1 px-pair2 ]     ast ] (|||. (apply typing px-pair1) (apply typing px-pair2)))
       :else                 (throw (IllegalArgumentException.)))
     :else (throw (IllegalArgumentException.)))))
-(defmethod syntactic-type clojure.lang.Symbol [type-system ast] (let
+(defmethod syntactic-type :default [type-system ast] (let
   [ ast'   (macroexpand ast)
   , macro? (not= ast ast')
   , apply? (not macro?)
