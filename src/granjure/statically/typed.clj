@@ -68,9 +68,15 @@
 (defmethod subst-variable [Arr Arr]    [t src dest] (subst-variable (subst-variable t (:src src) (:src dest)) (subst-variable (:tgt src) (:src src) (:src dest)) (:tgt dest)))
 (defmethod subst-variable [Var Object] [t src dest] (replace-variable t src dest))
 (defmethod subst-variable [Class Class] [t src dest] (cond
+  (= src dest)                     t
   (contains? (ancestors dest) src) (replace-variable t src dest)
   :else                            nil))
 (defmethod subst-variable :default     [t src dest] nil)
+
+(defmulti  application (fn [f x] (type f)))
+(defmethod application Arr [f x] (:tgt (subst-variable f (:src f) x)))
+(defmethod application ||| [f x] (or (application (:left f) x) (application (:right f) x)))
+(defmethod application :default [f x] nil)
 
 (defn rename-conflicting-variables [t r]
   (reduce
@@ -123,9 +129,7 @@
       [ [ f & xs ] (map #(statically-type type-system %) ast)
       , xs (reduce (fn [a b] (&&&. b a)) (reverse xs))
       , xs (rename-conflicting-variables xs f)
-      ] (condp instance? f
-      Arr (:tgt (subst-variable f (:src f) xs))
-      nil)))
+      ] (application f xs)))
   ] (cond
     macro? (syntactic-type-macro)
     apply? (syntactic-type-apply)))))
