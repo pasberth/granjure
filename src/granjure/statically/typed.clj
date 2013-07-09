@@ -3,6 +3,7 @@
         infixing.core))
 
 (defrecord TypeSystem [ast cxt])
+(defrecord Hold       [expected actual])
 (defrecord &&&        [first second])
 (defrecord |||        [left right])
 (defrecord Arr        [src tgt])
@@ -11,24 +12,28 @@
 (defmethod print-method &&& [v w]
   (if (condp instance? (:first v) Arr true ||| true false) (do
     (.write w "(")
-    (print-method (:left v) w)
-    (.write w ")")))
+    (print-method (:first v) w)
+    (.write w ")"))
+    (print-method (:first v) w))
   (.write w " * ")
   (if (condp instance? (:second v) Arr true ||| true false) (do
     (.write w "(")
     (print-method (:second v) w)
-    (.write w ")"))))
+    (.write w ")"))
+    (print-method (:second v) w)))
 
 (defmethod print-method ||| [v w]
   (if (condp instance? (:left v) Arr true &&& true false) (do
     (.write w "(")
     (print-method (:left v) w)
-    (.write w ")")))
+    (.write w ")"))
+    (print-method (:left v) w))
   (.write w " | ")
   (if (condp instance? (:right v) Arr true &&& true false) (do
     (.write w "(")
     (print-method (:right v) w)
-    (.write w ")"))))
+    (.write w ")"))
+    (print-method (:right v) w)))
 
 (defmethod print-method Arr [v w]
   (if (instance? Arr (:src v)) (do
@@ -54,6 +59,7 @@
 (defmethod replace-variable ||| [t src dest] (|||. (replace-variable (:left t) src dest) (replace-variable (:right t) src dest)))
 (defmethod replace-variable Arr [t src dest] (Arr. (replace-variable (:src t) src dest) (replace-variable (:tgt t) src dest)))
 (defmethod replace-variable Var [t src dest] (if (= src t) dest t))
+(defmethod replace-variable Class [t src dest] t)
 
 (defmulti  subst-variable          (fn [t src dest] [(type src), (type dest)]))
 (defmethod subst-variable [||| Object] [t src dest] (or (subst-variable t (:left src) dest) (subst-variable t (:right src) dest)))
@@ -132,11 +138,15 @@
   (reduce (fn [ts ast] (statically-type-system ts ast))
           type-system
           (rest ast)))
-(defmethod syntactic-type-system 'def [type-system ast]
+(defmethod syntactic-type-system 'def [type-system ast] (let
+  [ cxt  (:cxt type-system)
+  , id   (fnext ast)
+  , hold (cxt id)
+  ]
   (TypeSystem. (:ast type-system)
-               (conj (:cxt type-system)
-                     [ (fnext ast)
-                     , (statically-type type-system (first (nnext ast))) ])))
+               (conj cxt
+                     [ id
+                     , (Hold. (:expected hold) (statically-type type-system (first (nnext ast)))) ]))))
 (defmethod syntactic-type-system :default [type-system ast] (let
   [ ast'   (macroexpand ast)
   , macro? (not= ast ast')
@@ -156,6 +166,9 @@
                             (seq? x) (expr x)
                             :else x)))) ]
     (expr code)))
+
+(defmacro hold [& code]
+  `(Hold. (constraint ~@code) (constraint ~@code)))
 
 (defmacro typing-with [type-system & ast]
   (let [ type-system `(TypeSystem. '(do ~@ast) (:cxt ~type-system)) ]
