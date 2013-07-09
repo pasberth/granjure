@@ -71,6 +71,7 @@
     t
     (variables r)))
 
+(def empty-system (TypeSystem. nil {}))
 
 (defn assume [type-system sym type]
   (TypeSystem. (:ast type-system) (conj (:cxt type-system) [sym type])))
@@ -120,6 +121,29 @@
     macro? (syntactic-type-macro)
     apply? (syntactic-type-apply)))))
 
+(declare syntactic-type-system)
+
+(defn statically-type-system [type-system ast] (cond
+  (seq? ast) (syntactic-type-system type-system ast)
+  :else      type-system))
+
+(defmulti  syntactic-type-system  (fn [type-system ast] (first ast)))
+(defmethod syntactic-type-system 'do  [type-system ast]
+  (reduce (fn [ts ast] (statically-type-system ts ast))
+          type-system
+          (rest ast)))
+(defmethod syntactic-type-system 'def [type-system ast]
+  (TypeSystem. (:ast type-system)
+               (conj (:cxt type-system)
+                     [ (fnext ast)
+                     , (statically-type type-system (first (nnext ast))) ])))
+(defmethod syntactic-type-system :default [type-system ast] (let
+  [ ast'   (macroexpand ast)
+  , macro? (not= ast ast')
+  ] (cond
+    macro? (statically-type-system type-system ast')
+    :else  type-system)))
+
 (def constraint-rule (merge-rule
   (infixr-map 7 '* (fn [a b] `(&&&. ~a ~b)))
   (infixr-map 6 '| (fn [a b] `(|||. ~a ~b)))
@@ -132,3 +156,9 @@
                             (seq? x) (expr x)
                             :else x)))) ]
     (expr code)))
+
+(defmacro typing-with [type-system & ast]
+  (let [ type-system `(TypeSystem. '(do ~@ast) (:cxt ~type-system)) ]
+
+    `(do ~@ast
+      (syntactic-type-system ~type-system '(do ~@ast)))))
