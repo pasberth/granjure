@@ -6,6 +6,7 @@
 (def a-type-system (TypeSystem. nil
   { 'id    (hold :a -> :a)
   , 'const (hold :a -> :b -> :a)
+  , '<<<   (hold (:b -> :c) -> (:a -> :b) -> :a -> :c)
   }))
 
 (deftest test-a-type-system
@@ -13,7 +14,9 @@
     (is (= (statically-type a-type-system 'id)
            (constraint :a -> :a)))
     (is (= (statically-type a-type-system 'const)
-            (constraint :a -> :b -> :a)))
+           (constraint :a -> :b -> :a)))
+    (is (= (statically-type a-type-system '<<<)
+           (constraint (:b -> :c) -> (:a -> :b) -> :a -> :c)))
     (is (= (statically-type a-type-system 'f)
         nil))))
 
@@ -40,4 +43,17 @@
     (is (= (statically-type empty-system '((fn [x y] x) 42 "hello"))
            Long))
     (is (= (statically-type empty-system '((fn [x y] y) 42 "hello"))
-           String))))
+           String)))
+  (testing "type inference"
+    (is (= (statically-type a-type-system '(id 42))
+           Long))
+    (is (= (statically-type a-type-system '(id const))
+           (constraint :a0 -> :b -> :a0)))
+    (is (= (statically-type a-type-system '(const 42))
+           (constraint :b -> Long)))
+    (is (= (statically-type a-type-system '(const id))
+           (constraint :b -> :a0 -> :a0)))
+    (is (= (statically-type a-type-system '(<<< id))
+           (constraint (:a -> :a0) -> :a -> :a0)))
+    (is (= (statically-type a-type-system '(<<< (const 42)))
+           (constraint (:a -> :b0) -> :a -> Long)))))
