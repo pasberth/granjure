@@ -7,6 +7,7 @@
 (defrecord &&&        [first second])
 (defrecord |||        [left right])
 (defrecord Arr        [src tgt])
+(defrecord Tag        [t tag])
 (defrecord Var        [sym])
 
 (defmethod print-method &&& [v w]
@@ -47,10 +48,24 @@
 (defmethod print-method Var [v w]
   (print-method (:sym v) w))
 
+(defmethod print-method Tag [v w]
+  (if (contains? #{Arr &&& |||} (type (:tag v))) (do
+    (.write w "(")
+    (print-method (:t v) w)
+    (.write w ")"))
+    (print-method (:t v) w))
+  (.write w " ")
+  (if (contains? #{Arr &&& |||} (type (:tag v))) (do
+    (.write w "(")
+    (print-method (:tag v) w)
+    (.write w ")"))
+    (print-method (:tag v) w)))
+
 (defmulti  variables (fn [t] (type t)))
 (defmethod variables &&& [t] (vec (distinct (concat (variables (:first t)) (variables (:second t))))))
 (defmethod variables ||| [t] (vec (distinct (concat (variables (:left t)) (variables (:right t))))))
 (defmethod variables Arr [t] (vec (distinct (concat (variables (:src t)) (variables (:tgt t))))))
+(defmethod variables Tag [t] (vec (distinct (concat (variables (:t t)) (variables (:tag t))))))
 (defmethod variables Var [t] [(:sym t)])
 (defmethod variables :default [t] [])
 
@@ -58,6 +73,7 @@
 (defmethod replace-variable &&& [t src dest] (&&&. (replace-variable (:first t) src dest) (replace-variable (:second t) src dest)))
 ;(defmethod replace-variable ||| [t src dest] (|||. (replace-variable (:left t) src dest) (replace-variable (:right t) src dest)))
 (defmethod replace-variable Arr [t src dest] (Arr. (replace-variable (:src t) src dest) (replace-variable (:tgt t) src dest)))
+(defmethod replace-variable Tag [t src dest] (Tag. (replace-variable (:t t) src dest) (replace-variable (:tag t) src dest)))
 (defmethod replace-variable Var [t src dest] (if (= src t) dest t))
 (defmethod replace-variable Class [t src dest] (if (= src t) dest t))
 
@@ -66,8 +82,10 @@
 ;(defmethod subst-variable [Object |||] [t src dest] (or (subst-variable t src (:left dest)) (subst-variable t src (:right dest))))
 (defmethod subst-variable [&&& &&&]    [t src dest] (subst-variable (subst-variable t (:first src) (:first dest)) (subst-variable (:second src) (:first src) (:first dest)) (:second dest)))
 (defmethod subst-variable [Arr Arr]    [t src dest] (subst-variable (subst-variable t (:src src) (:src dest)) (subst-variable (:tgt src) (:src src) (:src dest)) (:tgt dest)))
+(defmethod subst-variable [Tag Tag]    [t src dest] (subst-variable (subst-variable t (:t src) (:t dest)) (subst-variable (:tag src) (:t src) (:t dest)) (:tag dest)))
 (defmethod subst-variable [Var Var]    [t src dest] (replace-variable t src dest))
 (defmethod subst-variable [Var Arr]    [t src dest] (replace-variable t src dest))
+(defmethod subst-variable [Var Tag]    [t src dest] (replace-variable t src dest))
 (defmethod subst-variable [Var Class]  [t src dest] (replace-variable t src dest))
 (defmethod subst-variable [Class Class] [t src dest] (cond
   (= src dest)                     t
@@ -99,6 +117,10 @@
 (defn statically-type [type-system ast] (cond 
   (seq?    ast) (syntactic-type type-system ast)
   (symbol? ast) (lookup-type-of type-system ast)
+  (vector? ast) (let [ types (distinct (map #(statically-type type-system %) ast))
+                       tag   (if (empty? types) (Var. :a) (reduce (fn [a b] (|||. b a)) (reverse types)))
+                     ]
+                  (Tag. (type ast) tag))
   :else         (type ast)))
 
 (defn lookup-type-of [type-system sym]
@@ -164,9 +186,10 @@
     :else  type-system)))
 
 (def constraint-rule (merge-rule
-  (infixr-map 7 '* (fn [a b] `(&&&. ~a ~b)))
-  (infixr-map 6 '| (fn [a b] `(|||. ~a ~b)))
-  (infixr-map 5 '-> (fn [a b] `(Arr. ~a ~b)))))
+  (infixl-space 9     (fn [a b] `(Tag. ~a ~b)))
+  (infixr-map   7 '*  (fn [a b] `(&&&. ~a ~b)))
+  (infixr-map   6 '|  (fn [a b] `(|||. ~a ~b)))
+  (infixr-map   5 '-> (fn [a b] `(Arr. ~a ~b)))))
 
 (defmacro constraint [& code]
   (letfn [ (expr [code] (infixing constraint-rule
