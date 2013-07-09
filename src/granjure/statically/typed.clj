@@ -89,7 +89,7 @@
 (def empty-system (TypeSystem. nil {}))
 
 (defn assume [type-system sym type]
-  (TypeSystem. (:ast type-system) (conj (:cxt type-system) [sym type])))
+  (TypeSystem. (:ast type-system) (conj (:cxt type-system) [sym (Hold. type nil)])))
 
 (declare syntactic-type)
 (declare lookup-type-of)
