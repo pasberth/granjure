@@ -55,7 +55,7 @@
     (.write w ")"))
     (print-method (:t v) w))
   (.write w " ")
-  (if (contains? #{Arr &&& |||} (type (:tag v))) (do
+  (if (contains? #{Arr &&& ||| Tag} (type (:tag v))) (do
     (.write w "(")
     (print-method (:tag v) w)
     (.write w ")"))
