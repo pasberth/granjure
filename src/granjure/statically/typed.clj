@@ -91,7 +91,7 @@
   :else         (type ast)))
 
 (defn lookup-type-of [type-system sym]
-  ((:cxt type-system) sym)
+  (let [ hold ((:cxt type-system) sym) ] (or (:expected hold) (:actual hold)))
   ; TODO: もし存在しなければ type-system の ast で def されていないかを調べる
   )
 
