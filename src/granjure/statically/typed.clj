@@ -56,17 +56,19 @@
 
 (defmulti  replace-variable (fn [t src dest] (type t)))
 (defmethod replace-variable &&& [t src dest] (&&&. (replace-variable (:first t) src dest) (replace-variable (:second t) src dest)))
-(defmethod replace-variable ||| [t src dest] (|||. (replace-variable (:left t) src dest) (replace-variable (:right t) src dest)))
+;(defmethod replace-variable ||| [t src dest] (|||. (replace-variable (:left t) src dest) (replace-variable (:right t) src dest)))
 (defmethod replace-variable Arr [t src dest] (Arr. (replace-variable (:src t) src dest) (replace-variable (:tgt t) src dest)))
 (defmethod replace-variable Var [t src dest] (if (= src t) dest t))
 (defmethod replace-variable Class [t src dest] (if (= src t) dest t))
 
 (defmulti  subst-variable          (fn [t src dest] [(type src), (type dest)]))
-(defmethod subst-variable [||| Object] [t src dest] (or (subst-variable t (:left src) dest) (subst-variable t (:right src) dest)))
-(defmethod subst-variable [Object |||] [t src dest] (or (subst-variable t src (:left dest)) (subst-variable t src (:right dest))))
+;(defmethod subst-variable [||| Object] [t src dest] (or (subst-variable t (:left src) dest) (subst-variable t (:right src) dest)))
+;(defmethod subst-variable [Object |||] [t src dest] (or (subst-variable t src (:left dest)) (subst-variable t src (:right dest))))
 (defmethod subst-variable [&&& &&&]    [t src dest] (subst-variable (subst-variable t (:first src) (:first dest)) (subst-variable (:second src) (:first src) (:first dest)) (:second dest)))
 (defmethod subst-variable [Arr Arr]    [t src dest] (subst-variable (subst-variable t (:src src) (:src dest)) (subst-variable (:tgt src) (:src src) (:src dest)) (:tgt dest)))
-(defmethod subst-variable [Var Object] [t src dest] (replace-variable t src dest))
+(defmethod subst-variable [Var Var]    [t src dest] (replace-variable t src dest))
+(defmethod subst-variable [Var Arr]    [t src dest] (replace-variable t src dest))
+(defmethod subst-variable [Var Class]  [t src dest] (replace-variable t src dest))
 (defmethod subst-variable [Class Class] [t src dest] (cond
   (= src dest)                     t
   (contains? (ancestors dest) src) (replace-variable t src dest)

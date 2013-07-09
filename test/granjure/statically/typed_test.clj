@@ -44,6 +44,14 @@
            Long))
     (is (= (statically-type empty-system '((fn [x y] y) 42 "hello"))
            String)))
+  (testing "dynamic type inference"
+    (is (= (statically-type empty-system '(fn ([x] x) ([y z] y)))
+           (constraint (:x -> :x) | (:y * :z -> :y))))
+    (is (= (statically-type empty-system '((fn ([x] x) ([y z] y)) "hello"))
+           String))
+    (is (= (statically-type empty-system '((fn ([x] x) ([y z] y)) 42 "hello"))
+           Long)))
+
   (testing "type inference"
     (is (= (statically-type a-type-system '(id 42))
            Long))
