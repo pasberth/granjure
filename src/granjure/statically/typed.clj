@@ -187,10 +187,10 @@
 
 (defn hold-contradiction? [hold] (or
   (not (:actual hold))
-  (not= (:expected hold) (subst-variable (:actual hold) (:actual hold) (:expected hold)))))
+  (not= (subst-variable (:expected hold) (:expected hold) (:expected hold)) (subst-variable (:actual hold) (:actual hold) (:expected hold)))))
 
 (defn contradiction? [type-system]
-  (some hold-contradiction? (:cxt type-system)))
+  (some hold-contradiction? (vals (:cxt type-system))))
 
 (def constraint-rule (merge-rule
   (infixl-space 9     (fn [a b] `(Tag. ~a ~b)))
