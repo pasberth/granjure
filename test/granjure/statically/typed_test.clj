@@ -98,17 +98,21 @@
     (is (= (statically-type-system empty-system '(def f (fn [x] x)))
            (TypeSystem. nil
              { 'f (Hold. nil (constraint :x -> :x)) })))
-    (is (= (statically-type-system empty-system
-             '(do (def f (fn [x] x))
-                  (def g f)))
-           (TypeSystem. nil
-             { 'f (Hold. nil (constraint :x -> :x))
-             , 'g (Hold. nil (constraint :x -> :x))
-             })))
-    (is (= (statically-type-system empty-system
-             '(do (def f g)
-                  (def g (fn [x] x))))
-           (TypeSystem. nil
-             { 'f (Hold. nil (constraint :x -> :x))
-             , 'g (Hold. nil (constraint :x -> :x))
-             })))))
+    (let [ ast '(do (def f (fn [x] x))
+                    (def g f)) ]
+      (is (= (statically-type-system
+               (TypeSystem. ast {})
+               ast)
+             (TypeSystem. ast
+               { 'f (Hold. nil (constraint :x -> :x))
+               , 'g (Hold. nil (constraint :x -> :x))
+               }))))
+    (let [ ast '(do (def f g)
+                    (def g (fn [x] x))) ]
+      (is (= (statically-type-system
+               (TypeSystem. ast {})
+               ast)
+             (TypeSystem. ast
+               { 'f (Hold. nil (constraint :x -> :x))
+               , 'g (Hold. nil (constraint :x -> :x))
+               }))))))

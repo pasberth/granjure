@@ -116,17 +116,36 @@
 
 (defn statically-type [type-system ast] (cond 
   (seq?    ast) (syntactic-type type-system ast)
-  (symbol? ast) (lookup-type-of type-system ast)
+  (symbol? ast) (lookup-type-of ast type-system)
   (vector? ast) (let [ types (distinct (map #(statically-type type-system %) ast))
                        tag   (if (empty? types) (Var. :a) (reduce (fn [a b] (|||. b a)) (reverse types)))
                      ]
                   (Tag. (type ast) tag))
   :else         (type ast)))
 
-(defn lookup-type-of [type-system sym]
-  (let [ hold ((:cxt type-system) sym) ] (or (:expected hold) (:actual hold)))
-  ; TODO: もし存在しなければ type-system の ast で def されていないかを調べる
-  )
+(declare syntactic-lookup-type-of)
+
+(defn statically-lookup-type-of [sym type-system ast] (cond
+  (seq? ast) (syntactic-lookup-type-of sym type-system ast)
+  :else      nil))
+
+(defmulti  syntactic-lookup-type-of  (fn [sym type-system ast] (first ast)))
+(defmethod syntactic-lookup-type-of 'def [sym type-system ast] (let
+  [ id   (fnext ast)
+  , body `(do ~@(nnext ast))
+  ] (cond (= id sym) (statically-type type-system body) :else nil)))
+(defmethod syntactic-lookup-type-of 'do  [sym type-system ast]
+  (reduce (fn [a b] (or (statically-lookup-type-of sym type-system b) a)) nil (rest ast)))
+(defmethod syntactic-lookup-type-of :default [sym type-system ast] (let
+  [ ast'   (macroexpand ast)
+  , macro? (not= ast ast')
+  ] (cond
+    macro? (statically-lookup-type-of sym type-system ast')
+    :else  nil)))
+
+(defn lookup-type-of [sym type-system]
+  (let [ hold ((:cxt type-system) sym) ]
+    (or (:expected hold) (:actual hold) (statically-lookup-type-of sym type-system (:ast type-system)))))
 
 (defmulti  syntactic-type                 (fn [type-system ast] (first ast)))
 (defmethod syntactic-type 'fn*                [type-system ast] (letfn
@@ -143,6 +162,8 @@
       (seq?    (fnext ast)) (let [ [ _ px-pair1 px-pair2 ]     ast ] (|||. (apply typing px-pair1) (apply typing px-pair2)))
       :else                 (throw (IllegalArgumentException.)))
     :else (throw (IllegalArgumentException.)))))
+(defmethod syntactic-type 'do                 [type-system ast]
+  (reduce (fn [a b] (or (statically-type type-system b) a)) nil (rest ast)))
 (defmethod syntactic-type :default [type-system ast] (let
   [ ast'   (macroexpand ast)
   , macro? (not= ast ast')
