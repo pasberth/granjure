@@ -1,7 +1,7 @@
 (ns granjure.statically.typed_test
   (:use clojure.test
         granjure.statically.typed)
-  (:import [granjure.statically.typed TypeSystem]))
+  (:import [granjure.statically.typed TypeSystem Hold]))
 
 (def a-type-system (TypeSystem. nil
   { 'id    (hold :a -> :a)
@@ -89,3 +89,26 @@
            nil))
     (is (= (statically-type a-type-system '((curry ++) [42]))
            (constraint clojure.lang.PersistentVector Long -> clojure.lang.PersistentVector Long)))))
+
+(deftest test-type-system
+  (testing "simple building type system"
+    (is (= (statically-type-system empty-system '(def x 42))
+           (TypeSystem. nil
+             { 'x (Hold. nil Long) })))
+    (is (= (statically-type-system empty-system '(def f (fn [x] x)))
+           (TypeSystem. nil
+             { 'f (Hold. nil (constraint :x -> :x)) })))
+    (is (= (statically-type-system empty-system
+             '(do (def f (fn [x] x))
+                  (def g f)))
+           (TypeSystem. nil
+             { 'f (Hold. nil (constraint :x -> :x))
+             , 'g (Hold. nil (constraint :x -> :x))
+             })))
+    (is (= (statically-type-system empty-system
+             '(do (def f g)
+                  (def g (fn [x] x))))
+           (TypeSystem. nil
+             { 'f (Hold. nil (constraint :x -> :x))
+             , 'g (Hold. nil (constraint :x -> :x))
+             })))))
