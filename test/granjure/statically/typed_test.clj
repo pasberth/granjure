@@ -115,4 +115,14 @@
              (TypeSystem. ast
                { 'f (Hold. nil (constraint :x -> :x))
                , 'g (Hold. nil (constraint :x -> :x))
-               }))))))
+               }))))
+    (let [ ast '(do (def x y)
+                    (def y x)) ]
+      (is (= (statically-type-system
+               (TypeSystem. ast {})
+               ast)
+             (TypeSystem. ast
+               { 'x (Hold. nil nil)
+               , 'y (Hold. nil nil)
+               }))))
+    ))

@@ -145,7 +145,8 @@
 
 (defn lookup-type-of [sym type-system]
   (let [ hold ((:cxt type-system) sym) ]
-    (or (:expected hold) (:actual hold) (statically-lookup-type-of sym type-system (:ast type-system)))))
+    (or (:expected hold) (:actual hold)
+      (if hold nil (statically-lookup-type-of sym type-system (:ast type-system))))))
 
 (defmulti  syntactic-type                 (fn [type-system ast] (first ast)))
 (defmethod syntactic-type 'fn*                [type-system ast] (letfn
@@ -194,6 +195,7 @@
   [ cxt  (:cxt type-system)
   , id   (fnext ast)
   , hold (cxt id)
+  , type-system (TypeSystem. (:ast type-system) (conj cxt [ id, (or hold (Hold. nil nil)) ]))
   ]
   (TypeSystem. (:ast type-system)
                (conj cxt
