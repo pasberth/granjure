@@ -3,10 +3,10 @@
         granjure.syntax))
 
 
-(def add-rule (forall (fn [a b c] (list b a c)) #{:a :b} '(:a + :b)))
-(def sub-rule (forall (fn [a b c] (list b a c)) #{:a :b} '(:a - :b)))
-(def mul-rule (forall (fn [a b c] (list b a c)) #{:a :b} '(:a * :b)))
-(def div-rule (forall (fn [a b c] (list b a c)) #{:a :b} '(:a / :b)))
+(def add-rule #(forall (fn [a b c] (list b a c)) #{:a :b} '(:a + :b) %))
+(def sub-rule #(forall (fn [a b c] (list b a c)) #{:a :b} '(:a - :b) %))
+(def mul-rule #(forall (fn [a b c] (list b a c)) #{:a :b} '(:a * :b) %))
+(def div-rule #(forall (fn [a b c] (list b a c)) #{:a :b} '(:a / :b) %))
 
 (deftest ret-literal1
   (testing "x == x"
