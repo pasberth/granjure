@@ -4,9 +4,8 @@
 
 
 (def add-rule #(forall (fn [a b c] (list b a c)) #{:a :b} '(:a + :b) %))
-(def sub-rule #(forall (fn [a b c] (list b a c)) #{:a :b} '(:a - :b) %))
 (def mul-rule #(forall (fn [a b c] (list b a c)) #{:a :b} '(:a * :b) %))
-(def div-rule #(forall (fn [a b c] (list b a c)) #{:a :b} '(:a / :b) %))
+(def cond-rule #(forall (fn [a _ b _ c] (list 'if a b c)) #{:a :b :c} '(:a then :b else :c) %))
 
 (deftest ret-literal1
   (testing "x == x"
@@ -79,3 +78,11 @@
 (deftest fixl-mul-mul-add-rule-test
   (testing "(a * b * c + d) == (+ (* a (* b c)) d)"
     (is (= (fixr add-rule (fixr mul-rule '(a * b * c + d))) '((+ (* a (* b c)) d))))))
+
+(deftest fixl-cond-cond-rule-test
+  (testing "(a then b else c then d else e) == (if (if a b c) d e)"
+    (is (= (fixl cond-rule '(a then b else c then d else e)) '((if (if a b c) d e))))))
+
+(deftest fixr-cond-cond-rule-test
+  (testing "(if a then b else if c then d else e) == (if a b (if c d e))"
+    (is (= (fixr cond-rule '(a then b else c then d else e)) '((if a b (if c d e)))))))
