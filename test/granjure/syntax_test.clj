@@ -28,6 +28,54 @@
   (testing "(x + y + z) == ((+ (+ x y) z))"
     (is (= (fixl add-rule '(x + y + z)) '((+ (+ x y) z))))))
 
+(deftest fixl-add-mul-add-rule-test
+  (testing "(a + b * c + d) == (+ (+ a (* b c)) d)"
+    (is (= (fixl add-rule (fixl mul-rule '(a + b * c + d))) '((+ (+ a (* b c)) d))))))
+
+(deftest fixl-mul-add-add-rule-test
+  (testing "(a * b + c + d) == (+ (+ (* a b) c) d)"
+    (is (= (fixl add-rule (fixl mul-rule '(a * b + c + d))) '((+ (+ (* a b) c) d))))))
+
+(deftest fixl-add-add-mul-rule-test
+  (testing "(a + b + c * d) == (+ (+ a b) (* c d))"
+    (is (= (fixl add-rule (fixl mul-rule '(a + b + c * d))) '((+ (+ a b) (* c d)))))))
+
+(deftest fixl-mul-add-mul-rule-test
+  (testing "(a * b + c * d) == (+ (* a b) (* c d))"
+    (is (= (fixl add-rule (fixl mul-rule '(a * b + c * d))) '((+ (* a b) (* c d)))))))
+
+(deftest fixl-add-mul-mul-rule-test
+  (testing "(a + b * c * d) == (+ a (* (* b c) d))"
+    (is (= (fixl add-rule (fixl mul-rule '(a + b * c * d))) '((+ a (* (* b c) d)))))))
+
+(deftest fixl-mul-mul-add-rule-test
+  (testing "(a * b * c + d) == (+ (* (* a b) c) d)"
+    (is (= (fixl add-rule (fixl mul-rule '(a * b * c + d))) '((+ (* (* a b) c) d))))))
+
 (deftest fixr-add-rule-test
   (testing "(x + y + z) == ((+ x (+ y z)))"
     (is (= (fixr add-rule '(x + y + z)) '((+ x (+ y z)))))))
+
+(deftest fixr-add-mul-add-rule-test
+  (testing "(a + b * c + d) == ((+ a (+ (* b c) d)))"
+    (is (= (fixr add-rule (fixr mul-rule '(a + b * c + d))) '((+ a (+ (* b c) d)))))))
+
+(deftest fixr-mul-add-add-rule-test
+  (testing "(a * b + c + d) == ((+ (* a b) (+ c d)))"
+    (is (= (fixr add-rule (fixr mul-rule '(a * b + c + d))) '((+ (* a b) (+ c d)))))))
+
+(deftest fixr-add-add-mul-rule-test
+  (testing "(a + b + c * d) == ((+ (+ a b) (* c d)))"
+    (is (= (fixr add-rule (fixr mul-rule '(a + b + c * d))) '((+ a (+ b (* c d))))))))
+
+(deftest fixr-mul-add-mul-rule-test
+  (testing "(a * b + c * d) == ((+ (* a b) (* c d)))"
+    (is (= (fixr add-rule (fixr mul-rule '(a * b + c * d))) '((+ (* a b) (* c d)))))))
+
+(deftest fixr-add-mul-mul-rule-test
+  (testing "(a + b * c * d) == (+ a (* b (* c d)))"
+    (is (= (fixr add-rule (fixr mul-rule '(a + b * c * d))) '((+ a (* b (* c d))))))))
+
+(deftest fixl-mul-mul-add-rule-test
+  (testing "(a * b * c + d) == (+ (* a (* b c)) d)"
+    (is (= (fixr add-rule (fixr mul-rule '(a * b * c + d))) '((+ (* a (* b c)) d))))))
