@@ -1,18 +1,18 @@
 (ns granjure.syntax)
 
 (defn forall [format variables formula tokens]
-  (let   [ len       (count formula)
-           variables (set variables)
-         ] (cond
+  (let   [ len       (count formula) ] (cond
   (not (seq? tokens))
     tokens
   (< (count tokens) len)
     tokens
   :else (let [ tokens' (drop len tokens)
                tokens  (take len tokens)
+               zipped  (map list formula tokens)
              ] (cond
-  (every? true? (map (fn [f t] (or (contains? variables f) (= f t))) formula tokens))
-    (cons (apply format tokens) tokens')
+  (every? (fn [[f t]] (or (contains? variables f) (= f t))) zipped)
+    (let [ tokens (reduce (fn [r [f t]] (cond (contains? variables f) (conj r t) :else r)) [] zipped) ]
+      (cons (apply format tokens) tokens'))
   :else
     (concat tokens tokens'))))))
 

@@ -3,9 +3,9 @@
         granjure.syntax))
 
 
-(def add-rule #(forall (fn [a b c] (list b a c)) #{:a :b} '(:a + :b) %))
-(def mul-rule #(forall (fn [a b c] (list b a c)) #{:a :b} '(:a * :b) %))
-(def cond-rule #(forall (fn [a _ b _ c] (list 'if a b c)) #{:a :b :c} '(:a then :b else :c) %))
+(def add-rule #(forall (fn [a b] (list '+ a b)) #{:a :b} '(:a + :b) %))
+(def mul-rule #(forall (fn [a b] (list '* a b)) #{:a :b} '(:a * :b) %))
+(def cond-rule #(forall (fn [a b c] (list 'if a b c)) #{:a :b :c} '(:a then :b else :c) %))
 
 (deftest ret-literal1
   (testing "x == x"
